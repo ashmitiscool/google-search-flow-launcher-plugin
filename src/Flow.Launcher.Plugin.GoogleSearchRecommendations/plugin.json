@@ -1,0 +1,14 @@
+{
+  "ID": "B8F4E2D1A9C347658E123456789ABCDE",
+  "ActionKeywords": [
+    "g"
+  ],
+  "Name": "Google Search Recommendations",
+  "Description": "Search Google with live browser-style autocomplete recommendations in Flow Launcher",
+  "Author": "ashmi",
+  "Version": "1.0.0",
+  "Language": "csharp",
+  "Website": "https://github.com/ashmi/google_search_recommendation_flow_launcher_plugin",
+  "ExecuteFileName": "Flow.Launcher.Plugin.GoogleSearchRecommendations.dll",
+  "IcoPath": "Images\\google.png"
+}
