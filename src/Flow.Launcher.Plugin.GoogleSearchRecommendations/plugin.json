@@ -8,7 +8,7 @@
   "Author": "ashmi",
   "Version": "1.0.0",
   "Language": "csharp",
-  "Website": "https://github.com/ashmi/google_search_recommendation_flow_launcher_plugin",
+  "Website": "https://github.com/ashmitiscool/google-search-flow-launcher-plugin",
   "ExecuteFileName": "Flow.Launcher.Plugin.GoogleSearchRecommendations.dll",
   "IcoPath": "Images\\google.png"
 }
