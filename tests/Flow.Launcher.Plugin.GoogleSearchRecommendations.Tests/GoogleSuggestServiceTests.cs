@@ -73,6 +73,30 @@ public class GoogleSuggestServiceTests
     }
 
     [Fact]
+    public async Task TryGetCachedSuggestions_ReturnsFalseBeforeFetchAndTrueCaseInsensitivelyAfterFetch()
+    {
+        const string jsonResponse = """
+            ["flow launcher",["flow launcher plugins","flow launcher themes"]]
+            """;
+
+        var handler = new StubHttpMessageHandler((_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StringContent(jsonResponse, Encoding.UTF8, "application/json")
+        }));
+
+        var service = new GoogleSuggestService(new HttpClient(handler));
+
+        Assert.False(service.TryGetCachedSuggestions("flow launcher", out IReadOnlyList<string> beforeFetch));
+        Assert.Empty(beforeFetch);
+
+        IReadOnlyList<string> fetched = await service.GetSuggestionsAsync("flow launcher");
+
+        Assert.True(service.TryGetCachedSuggestions("  FLOW LAUNCHER  ", out IReadOnlyList<string> cached));
+        Assert.Equal(fetched, cached);
+        Assert.Equal(1, handler.CallCount);
+    }
+
+    [Fact]
     public async Task GetSuggestionsAsync_CapsAtMaxSuggestions()
     {
         const string jsonResponse = """

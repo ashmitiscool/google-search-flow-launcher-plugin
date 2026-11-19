@@ -6,6 +6,12 @@ namespace Flow.Launcher.Plugin.GoogleSearchRecommendations;
 public interface IGoogleSuggestService
 {
     Task<IReadOnlyList<string>> GetSuggestionsAsync(string query, CancellationToken cancellationToken = default);
+
+    bool TryGetCachedSuggestions(string query, out IReadOnlyList<string> suggestions)
+    {
+        suggestions = Array.Empty<string>();
+        return false;
+    }
 }
 
 public sealed class GoogleSuggestService : IGoogleSuggestService
@@ -38,6 +44,24 @@ public sealed class GoogleSuggestService : IGoogleSuggestService
         };
         client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64; FlowLauncher)");
         return client;
+    }
+
+    public bool TryGetCachedSuggestions(string query, out IReadOnlyList<string> suggestions)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            suggestions = Array.Empty<string>();
+            return false;
+        }
+
+        if (_cache.TryGetValue(query.Trim(), out IReadOnlyList<string>? cached))
+        {
+            suggestions = cached;
+            return true;
+        }
+
+        suggestions = Array.Empty<string>();
+        return false;
     }
 
     public async Task<IReadOnlyList<string>> GetSuggestionsAsync(string query, CancellationToken cancellationToken = default)
@@ -114,6 +138,8 @@ public sealed class GoogleSuggestService : IGoogleSuggestService
                     }
                 }
             }
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             if (_cache.Count >= MaxCacheEntries)
             {
